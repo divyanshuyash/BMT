@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharat Med Tech</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8faff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 20px;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .logo-title {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0066ff, #2b84ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .subtitle span {
+            color: #0066ff;
+        }
+
+        .search-bar-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            height: 60px;
+            padding: 0 160px 0 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0, 102, 255, 0.15);
+            border-color: rgba(0, 102, 255, 0.3);
+        }
+
+        .controls {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filters-btn {
+            color: #0066ff;
+            background: none;
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .search-btn {
+            background: #0066ff;
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-results {
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .search-results.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .results-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .result-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            animation: slideIn 0.3s ease forwards;
+            text-align: left;
+        }
+
+        .result-item.user-query {
+            background: #f0f7ff;
+            border-left: 4px solid #0066ff;
+        }
+
+        .result-item.thinking {
+            background: #f8f8f8;
+            color: #666;
+        }
+
+        .result-item.error {
+            background: #fff5f5;
+            color: #e53e3e;
+            border-left: 4px solid #e53e3e;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .logo-title {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+                padding: 0 20px;
+            }
+
+            .search-bar {
+                padding: 0 100px 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <h1 class="logo-title">Bharat Med Tech</h1>
+        <p class="subtitle">Direct <span>science-based</span> answers to medical questions</p>
+        
+        <div class="search-bar-container">
+            <input type="text" class="search-bar" placeholder="Ask a health or bioscience question...">
+            
+            <div class="controls">
+                <button class="filters-btn">
+                    <span>Filters</span>
+                    <span class="material-symbols-outlined">tune</span>
+                </button>
+                
+                <button class="search-btn">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="search-results">
+            <ul class="results-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Debug logs to check if elements are found
+        console.log("Search Input:", document.querySelector(".search-bar"));
+        console.log("Search Button:", document.querySelector(".search-btn"));
+        console.log("Results List:", document.querySelector(".results-list"));
+        console.log("Search Results:", document.querySelector(".search-results"));
+
+        // DOM Elements
+        const searchInput = document.querySelector(".search-bar");
+        const searchBtn = document.querySelector(".search-btn");
+        const resultsList = document.querySelector(".results-list");
+        const searchResults = document.querySelector(".search-results");
+
+        // API configuration
+        const API_KEY = "AIzaSyC21H8vX6KBpX2psee0gkdO_YbvRz_Md30";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+        // Create result item
+        const createResultItem = (content, className) => {
+            const li = document.createElement("li");
+            li.classList.add("result-item", className);
+            li.textContent = content;
+            return li;
+        };
+
+        // Generate response from API
+        const generateResponse = async (userQuery, thinkingItem) => {
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{
+                        role: "user",
+                        parts: [{ text: userQuery }]
+                    }]
+                }),
+            };
+
+            try {
+                console.log("Sending API request...");
+                const response = await fetch(API_URL, requestOptions);
+                const data = await response.json();
+                console.log("API Response:", data);
+                
+                if (!response.ok) throw new Error(data.error.message);
+                
+                const responseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
+                const responseItem = createResultItem(responseText, "response");
+                thinkingItem.replaceWith(responseItem);
+            } catch (error) {
+                console.error("API Error:", error);
+                thinkingItem.textContent = `Error: ${error.message}`;
+                thinkingItem.classList.add("error");
+            }
+        };
+
+        // Handle search
+        const handleSearch = () => {
+            console.log("Search triggered");
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            // Show results container
+            searchResults.classList.add("active");
+
+            // Clear input
+            searchInput.value = "";
+
+            // Add user query to results
+            const userQueryItem = createResultItem(query, "user-query");
+            resultsList.insertBefore(userQueryItem, resultsList.firstChild);
+
+            // Add thinking message
+            const thinkingItem = createResultItem("Getting your answer...", "thinking");
+            resultsList.insertBefore(thinkingItem, userQueryItem.nextSibling);
+
+            // Generate response
+            generateResponse(query, thinkingItem);
+        };
+
+        // Event Listeners
+        searchBtn.addEventListener("click", handleSearch);
+        console.log("Click listener added to search button");
+
+        searchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSearch();
+            }
+        });
+        console.log("Keydown listener added to search input");
+
+        // Optional: Clear results when clicking filters
+        document.querySelector(".filters-btn").addEventListener("click", () => {
+            resultsList.innerHTML = "";
+            searchResults.classList.remove("active");
+        });
+    </script>
+</body>
+</html>
